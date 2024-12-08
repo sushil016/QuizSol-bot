@@ -1,0 +1,68 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id            String         @id @default(cuid())
+  name          String
+  email         String         @unique
+  password      String
+  role          Role          @default(USER)
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+  activities    UserActivity[]
+  bookmarks     Bookmark[]
+}
+
+model Question {
+  id            String         @id @default(cuid())
+  questionText  String
+  options       String         // JSON string of options array
+  correctAnswer Int           // Index of correct answer (0-3)
+  explanation   String?
+  category      String
+  subCategory   String
+  difficulty    Difficulty     @default(MEDIUM)
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+  activities    UserActivity[]
+  bookmarks     Bookmark[]
+}
+
+model UserActivity {
+  id          String    @id @default(cuid())
+  userId      String
+  questionId  String
+  isCorrect   Boolean
+  timeTaken   Int       // Time taken in seconds
+  attemptedAt DateTime  @default(now())
+  user        User      @relation(fields: [userId], references: [id])
+  question    Question  @relation(fields: [questionId], references: [id])
+}
+
+model Bookmark {
+  id          String    @id @default(cuid())
+  userId      String
+  questionId  String
+  createdAt   DateTime  @default(now())
+  user        User      @relation(fields: [userId], references: [id])
+  question    Question  @relation(fields: [questionId], references: [id])
+
+  @@unique([userId, questionId])
+}
+
+enum Role {
+  USER
+  ADMIN
+}
+
+enum Difficulty {
+  EASY
+  MEDIUM
+  HARD
+}
