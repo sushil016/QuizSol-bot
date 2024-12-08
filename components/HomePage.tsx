@@ -11,7 +11,7 @@ export function HomePage() {
 
   return (
     <div className="min-h-[calc(100vh-4rem)] flex items-center">
-      <div className="container mx-auto px-10">
+      <div className="container mx-auto px-16">
         <div className="flex flex-col md:flex-row items-center gap-8">
           {/* Left side content (60%) */}
           <motion.div 
@@ -47,9 +47,10 @@ export function HomePage() {
             >
               {!session ? (
                 <>
-                  <Button asChild size="lg" className="bg-primary hover:bg-primary/90">
+                  <button className="p-3 bg-gradient-to-r from-orange-500 via-purple-500 to-yellow-500 text-white rounded-lg text-base font-bold
+                  [background-size:300%] animate-moving-gradient">
                     <Link href="/register">Start Solving Now</Link>
-                  </Button>
+                  </button>
                   <Button asChild variant="outline" size="lg">
                     <Link href="/pyqs">Download PYQs</Link>
                   </Button>

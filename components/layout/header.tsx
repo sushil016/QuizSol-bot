@@ -75,7 +75,8 @@ export function Header() {
                 <Button variant="ghost">Sign in</Button>
               </Link>
               <Link href="/register">
-                <Button>Get Started</Button>
+                <button className="p-2 bg-gradient-to-r from-orange-500 via-purple-500 to-yellow-500 text-white rounded-lg text-sm 
+                  [background-size:300%] animate-moving-gradient">Get Started</button>
               </Link>
             </>
           )}

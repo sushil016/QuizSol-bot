@@ -9,6 +9,10 @@ const config: Config = {
   ],
   theme: {
     extend: {
+      backgroundColor: {
+        'gradient-primary': 'linear-gradient(to right, #FF5733, #FF9A33)',
+        'gradient-animated': 'bg-gradient-to-r from-orange-500 via-purple-500 to-yellow-500 text-white rounded-lg text-xl font-bold [background-size:300%] animate-moving-gradient'
+      },
       backgroundImage: {
         'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',
         'gradient-conic':
@@ -61,6 +65,12 @@ const config: Config = {
           '5': 'hsl(var(--chart-5))',
         },
       },
+      animation: {
+        'moving-gradient': 'moving-gradient 5s linear infinite',
+        'accordion-down': 'accordion-down 0.2s ease-out',
+        'accordion-up': 'accordion-up 0.2s ease-out',
+      },
+      },
       keyframes: {
         'accordion-down': {
           from: {
@@ -78,12 +88,12 @@ const config: Config = {
             height: '0',
           },
         },
+        'moving-gradient': {
+          '0%': { backgroundPosition: '0% 50%' },
+          '50%': { backgroundPosition: '100% 50%' },
+          '100%': { backgroundPosition: '0% 50%' },
+        },
       },
-      animation: {
-        'accordion-down': 'accordion-down 0.2s ease-out',
-        'accordion-up': 'accordion-up 0.2s ease-out',
-      },
-    },
   },
   plugins: [require('tailwindcss-animate')],
 };
