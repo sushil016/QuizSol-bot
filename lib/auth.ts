@@ -1,5 +1,7 @@
 import { NextAuthOptions } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
+import GoogleProvider from "next-auth/providers/google";
+import GithubProvider from "next-auth/providers/github";
 import { PrismaAdapter } from '@next-auth/prisma-adapter';
 import prisma from '@/lib/prisma';
 import { compare } from 'bcryptjs';
@@ -33,6 +35,14 @@ export const authOptions: NextAuthOptions = {
   },
   secret: process.env.NEXTAUTH_SECRET,
   providers: [
+    GoogleProvider({
+      clientId: process.env.GOOGLE_CLIENT_ID!,
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
+    }),
+    GithubProvider({
+      clientId: process.env.GITHUB_ID!,
+      clientSecret: process.env.GITHUB_SECRET!,
+    }),
     CredentialsProvider({
       name: "Credentials",
       credentials: {
@@ -61,7 +71,7 @@ export const authOptions: NextAuthOptions = {
 
           const isPasswordValid = await compare(
             credentials.password,
-            user.password
+            user.password ?? ''
           );
 
           console.log("Password valid:", isPasswordValid);
@@ -94,7 +104,7 @@ export const authOptions: NextAuthOptions = {
       console.log("Session callback - session:", session);
       return session;
     },
-    async jwt({ token, user }) {
+    async jwt({ token, user, account }) {
       console.log("JWT callback - user:", user);
       if (user) {
         token.id = user.id;
@@ -102,6 +112,37 @@ export const authOptions: NextAuthOptions = {
       }
       console.log("JWT callback - token:", token);
       return token;
-    }
+    },
+    async signIn({ user, account }) {
+      if (account?.provider === "google" || account?.provider === "github") {
+        if (!user.email) return false;
+        
+        // Check if user exists
+        const existingUser = await prisma.user.findUnique({
+          where: { email: user.email },
+        });
+
+        if (!existingUser) {
+          // Create new user if doesn't exist
+          const newUser = await prisma.user.create({
+            data: {
+              email: user.email,
+              name: user.name || user.email.split('@')[0],
+              role: 'USER',
+              password: '', // Empty password for OAuth users
+            },
+          });
+          
+          // Update the user object with the new user's data
+          user.id = newUser.id;
+          user.role = newUser.role;
+        } else {
+          // Update the user object with existing user's data
+          user.id = existingUser.id;
+          user.role = existingUser.role;
+        }
+      }
+      return true;
+    },
   }
 };

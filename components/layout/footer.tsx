@@ -27,7 +27,7 @@ export function Footer() {
       animate={{ opacity: 1 }}
       transition={{ duration: 0.5 }}
     >
-      <div className="container mx-auto px-4 py-12">
+      <div className="container max-w-7xl mx-auto px-4 py-12">
         <motion.div 
           className="grid grid-cols-1 md:grid-cols-4 gap-8"
           variants={container}
@@ -35,7 +35,7 @@ export function Footer() {
           animate="show"
         >
           <motion.div variants={item} className="space-y-4">
-            <h3 className="text-lg font-semibold">QuizMaster</h3>
+            <h3 className="text-lg font-semibold">QuizSoln...</h3>
             <p className="text-sm text-muted-foreground">
               Empowering learners through interactive practice and comprehensive assessments.
             </p>
