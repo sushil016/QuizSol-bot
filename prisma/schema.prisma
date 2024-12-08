@@ -19,6 +19,7 @@ model User {
   bookmarks     Bookmark[]
   accounts      Account[]      // Add this relation
   sessions      Session[]      // Add this relation
+  questionPapers QuestionPaper[]
 }
 
 model Question {
@@ -118,4 +119,23 @@ enum ContactStatus {
   PENDING
   RESPONDED
   ARCHIVED
+}
+
+enum ExamType {
+  NEET
+  JEE
+  GATE
+}
+
+model QuestionPaper {
+  id        String   @id @default(cuid())
+  examType  ExamType
+  year      Int
+  pdfUrl    String
+  title     String
+  isPractice Boolean  @default(false)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  uploadedBy User     @relation(fields: [userId], references: [id])
+  userId    String
 }
