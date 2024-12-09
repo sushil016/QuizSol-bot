@@ -1,8 +1,8 @@
 import { NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth';
-import { prisma } from '@/src/lib/prisma';
-import { questionSchema, questionQuerySchema } from '@/src/lib/validations/question';
-import { authOptions } from '@/src/lib/auth';
+import  prisma  from '@/lib/prisma';
+import { questionSchema, questionQuerySchema } from '@/lib/validations/question';
+import { authOptions } from '@/lib/auth';
 
 export async function POST(req: Request) {
   try {
@@ -54,7 +54,7 @@ export async function GET(req: Request) {
       ...(query.search && {
         questionText: {
           contains: query.search,
-          mode: 'insensitive',
+          mode: 'insensitive' as const,
         },
       }),
     };

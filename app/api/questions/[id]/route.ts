@@ -1,8 +1,8 @@
 import { NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth';
-import { prisma } from '@/src/lib/prisma';
-import { questionSchema } from '@/src/lib/validations/question';
-import { authOptions } from '@/src/lib/auth';
+import prisma from '@/lib/prisma';
+import { questionSchema } from '@/lib/validations/question';
+import { authOptions } from '@/lib/auth';
 
 export async function GET(
   req: Request,

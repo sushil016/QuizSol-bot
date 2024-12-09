@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth';
-import { prisma } from '@/src/lib/prisma';
-import { authOptions } from '@/src/lib/auth';
+import prisma from '@/lib/prisma';
+import { authOptions } from '@/lib/auth';
 import * as z from 'zod';
 
 const activitySchema = z.object({

@@ -21,7 +21,7 @@ export function HomePage() {
             transition={{ duration: 0.8 }}
           >
             <motion.h1 
-              className="text-4xl md:text-6xl lg:text-7xl font-bold leading-tight bg-clip-text text-transparent bg-gradient-to-r from-primary to-primary/50"
+              className="text-3xl md:text-6xl lg:text-7xl font-bold leading-tight bg-clip-text text-transparent bg-gradient-to-r from-primary to-primary/50"
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.2 }}
@@ -30,7 +30,7 @@ export function HomePage() {
             </motion.h1>
             
             <motion.p 
-              className="text-xl md:text-2xl text-muted-foreground"
+              className="text-sm md:text-2xl text-muted-foreground"
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.4 }}

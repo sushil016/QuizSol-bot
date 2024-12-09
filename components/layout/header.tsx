@@ -12,18 +12,30 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { User, LogOut, Settings } from 'lucide-react';
+import { User, LogOut, Settings, Menu } from 'lucide-react';
+import { useState } from 'react';
 
 export function Header() {
   const { data: session } = useSession();
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   return (
-    <header className="h-16 border-b">
-      <div className="container mx-auto h-full flex items-center justify-between px-10">
-        <Link href="/" className="text-xl font-bold ">
+    <header className="h-16 border-b relative">
+      <div className="container mx-auto h-full flex items-center justify-between px-4 sm:px-6 lg:px-10">
+        <Link href="/" className="text-xl font-bold">
           QuizSoln...
         </Link>
-        <nav className="flex items-center gap-4">
+
+        {/* Mobile menu button */}
+        <button
+          className="lg:hidden p-2"
+          onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+        >
+          <Menu className="h-6 w-6" />
+        </button>
+
+        {/* Desktop navigation */}
+        <nav className="hidden lg:flex items-center gap-4">
           {session ? (
             <>
               <Link href="/dashboard">Dashboard</Link>
@@ -76,11 +88,68 @@ export function Header() {
               </Link>
               <Link href="/register">
                 <button className="p-2 bg-gradient-to-r from-orange-500 via-purple-500 to-yellow-500 text-white rounded-lg text-sm 
-                  [background-size:300%] animate-moving-gradient">Get Started</button>
+                  [background-size:300%] animate-moving-gradient">
+                  Get Started
+                </button>
               </Link>
             </>
           )}
         </nav>
+
+        {/* Mobile navigation */}
+        {isMobileMenuOpen && (
+          <div className="absolute top-16 left-0 right-0 bg-white border-b shadow-lg lg:hidden z-50">
+            <nav className="flex flex-col p-4 space-y-4">
+              {session ? (
+                <>
+                  <div className="flex items-center space-x-2 px-2">
+                    <Avatar className="h-8 w-8">
+                      <AvatarImage src={session.user.image || ''} alt={session.user.name || ''} />
+                      <AvatarFallback>
+                        {session.user.name
+                          ? session.user.name.charAt(0).toUpperCase()
+                          : 'U'}
+                      </AvatarFallback>
+                    </Avatar>
+                    <div className="flex flex-col">
+                      <p className="text-sm font-medium">{session.user.name}</p>
+                      <p className="text-xs text-muted-foreground">{session.user.email}</p>
+                    </div>
+                  </div>
+                  <Link href="/dashboard" className="px-2 py-1 hover:bg-gray-100 rounded">
+                    Dashboard
+                  </Link>
+                  <Link href="/profile" className="px-2 py-1 hover:bg-gray-100 rounded">
+                    Profile
+                  </Link>
+                  <Link href="/settings" className="px-2 py-1 hover:bg-gray-100 rounded">
+                    Settings
+                  </Link>
+                  <button
+                    className="px-2 py-1 text-red-600 hover:bg-gray-100 rounded text-left"
+                    onClick={() => signOut({ callbackUrl: '/' })}
+                  >
+                    Log out
+                  </button>
+                </>
+              ) : (
+                <>
+                  <Link href="/login" className="w-full">
+                    <Button variant="ghost" className="w-full justify-start">
+                      Sign in
+                    </Button>
+                  </Link>
+                  <Link href="/register" className="w-full">
+                    <button className="w-full p-2 bg-gradient-to-r from-orange-500 via-purple-500 to-yellow-500 text-white rounded-lg text-sm 
+                      [background-size:300%] animate-moving-gradient">
+                      Get Started
+                    </button>
+                  </Link>
+                </>
+              )}
+            </nav>
+          </div>
+        )}
       </div>
     </header>
   );

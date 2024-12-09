@@ -3,6 +3,7 @@ import { authOptions } from '@/lib/auth';
 import prisma from '@/lib/prisma';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import Link from 'next/link';
+import { redirect } from 'next/navigation';
 
 export default async function QuestionPapersPage() {
   const session = await getServerSession(authOptions);
