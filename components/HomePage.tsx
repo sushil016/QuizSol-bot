@@ -3,7 +3,8 @@
 import Link from 'next/link';
 import { useSession } from 'next-auth/react';
 import { motion } from 'framer-motion';
-import { Button } from '@/components/ui/button';
+import {Button} from './ui/button';
+
  // You'll need to add this animation file
 
 export function HomePage() {
@@ -51,16 +52,17 @@ export function HomePage() {
                   [background-size:300%] animate-moving-gradient">
                     <Link href="/register">Start Solving Now</Link>
                   </button>
-                  <Button asChild variant="outline" size="lg">
+                  <Button variant="outline" size="lg">
                     <Link href="/pyqs">Download PYQs</Link>
                   </Button>
                 </>
               ) : (
                 <>
-                  <Button asChild size="lg">
+                  <button className="p-3 bg-gradient-to-r from-orange-500 via-purple-500 to-yellow-500 text-white rounded-lg text-base font-bold
+                  [background-size:300%] animate-moving-gradient">
                     <Link href="/dashboard">Go to Dashboard</Link>
-                  </Button>
-                  <Button asChild variant="outline" size="lg">
+                  </button>
+                  <Button  variant="outline" size="lg">
                     <Link href="/pyqs">Download PYQs</Link>
                   </Button>
                 </>

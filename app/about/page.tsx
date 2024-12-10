@@ -38,7 +38,7 @@ export default function AboutPage() {
           transition={{ delay: 0.3 }}
         >
           <p className="text-xl text-muted-foreground">
-            We're on a mission to make learning more engaging and effective through 
+            We are on a mission to make learning more engaging and effective through 
             interactive practice and personalized feedback.
           </p>
         </motion.div>
@@ -53,7 +53,7 @@ export default function AboutPage() {
             <h2 className="text-3xl font-bold">Our Story</h2>
             <p className="text-muted-foreground">
               Founded in 2023, QuizMaster began with a simple idea: learning should be 
-              engaging, accessible, and effective. We've grown from a small team of 
+              engaging, accessible, and effective. We have grown from a small team of 
               passionate educators to a platform serving thousands of learners worldwide.
             </p>
           </div>

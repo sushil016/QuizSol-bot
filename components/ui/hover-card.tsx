@@ -1,29 +1,106 @@
 'use client';
 
-import * as React from 'react';
-import * as HoverCardPrimitive from '@radix-ui/react-hover-card';
+import React, { 
+  useState, 
+  useRef, 
+  useEffect, 
+  ReactNode, 
+  HTMLAttributes 
+} from 'react';
 
-import { cn } from '@/lib/utils';
+type Alignment = 'start' | 'center' | 'end';
+type Side = 'top' | 'bottom' | 'left' | 'right';
 
-const HoverCard = HoverCardPrimitive.Root;
+interface HoverCardProps {
+  children: ReactNode;
+}
 
-const HoverCardTrigger = HoverCardPrimitive.Trigger;
+interface HoverCardContentProps extends HTMLAttributes<HTMLDivElement> {
+  children: ReactNode;
+  align?: Alignment;
+  side?: Side;
+  sideOffset?: number;
+}
 
-const HoverCardContent = React.forwardRef<
-  React.ElementRef<typeof HoverCardPrimitive.Content>,
-  React.ComponentPropsWithoutRef<typeof HoverCardPrimitive.Content>
->(({ className, align = 'center', sideOffset = 4, ...props }, ref) => (
-  <HoverCardPrimitive.Content
-    ref={ref}
-    align={align}
-    sideOffset={sideOffset}
-    className={cn(
-      'z-50 w-64 rounded-md border bg-popover p-4 text-popover-foreground shadow-md outline-none data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2',
-      className
-    )}
+const HoverCard: React.FC<HoverCardProps> = ({ children }) => {
+  const [isOpen, setIsOpen] = useState(false);
+
+  return (
+    <div className="relative inline-block">
+      {React.Children.map(children, child => 
+        React.cloneElement(child as React.ReactElement, { 
+          isOpen, 
+          setIsOpen 
+        })
+      )}
+    </div>
+  );
+};
+
+const HoverCardTrigger: React.FC<HTMLAttributes<HTMLDivElement> & { 
+  children: ReactNode;
+  isOpen?: boolean;
+  setIsOpen?: React.Dispatch<React.SetStateAction<boolean>>;
+}> = ({ 
+  children, 
+  isOpen, 
+  setIsOpen, 
+  ...props 
+}) => (
+  <div
+    onMouseEnter={() => setIsOpen?.(true)}
+    onMouseLeave={() => setIsOpen?.(false)}
     {...props}
-  />
-));
-HoverCardContent.displayName = HoverCardPrimitive.Content.displayName;
+  >
+    {children}
+  </div>
+);
 
-export { HoverCard, HoverCardTrigger, HoverCardContent };
+const HoverCardContent: React.FC<HoverCardContentProps & { 
+  isOpen?: boolean;
+}> = ({ 
+  children, 
+  isOpen, 
+  className = '',
+  align = 'center',
+  side = 'bottom',
+  sideOffset = 4,
+  ...props 
+}) => {
+  const contentRef = useRef<HTMLDivElement>(null);
+
+  const getPositionStyles = () => {
+    const baseStyles = 'absolute z-50 w-64 rounded-md border bg-white p-4 shadow-md';
+    const alignmentStyles = {
+      start: 'left-0',
+      center: 'left-1/2 transform -translate-x-1/2',
+      end: 'right-0'
+    };
+    const sideStyles = {
+      top: `bottom-full mb-${sideOffset}`,
+      bottom: `top-full mt-${sideOffset}`,
+      left: `right-full mr-${sideOffset}`,
+      right: `left-full ml-${sideOffset}`
+    };
+
+    return `${baseStyles} ${alignmentStyles[align]} ${sideStyles[side]}`;
+  };
+
+  if (!isOpen) return null;
+
+  return (
+    <div 
+      ref={contentRef}
+      className={`${getPositionStyles()} ${className}`}
+      {...props}
+    >
+      {children}
+    </div>
+  );
+};
+
+export { 
+  HoverCard, 
+  HoverCardTrigger, 
+  HoverCardContent 
+};

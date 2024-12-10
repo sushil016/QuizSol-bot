@@ -4,7 +4,7 @@ import { motion } from 'framer-motion'
 import { LiveSolvingFeature } from './live-solving-feature'
 import { PDFRepositoryFeature } from './pdf-repository-feature'
 import { PerformanceTrackingFeature } from './performance-tracking-feature'
-import Image from 'next/image'
+
 
 export function FeaturesOverview() {
   const containerVariants = {

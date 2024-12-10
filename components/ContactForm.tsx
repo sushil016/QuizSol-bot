@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-import { Textarea } from "@/components/ui/textarea"
+import {Textarea} from "@/components/ui/textarea"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { useToast } from "@/hooks/use-toast"
 
@@ -64,7 +64,7 @@ export function ContactForm() {
       toast({
         title: "Error",
         description: error instanceof Error ? error.message : "Failed to send message",
-        variant: "destructive",
+        variant: "error",
       });
     } finally {
       setIsSubmitting(false);

@@ -40,7 +40,7 @@ export default function LoginPage() {
 
       if (result?.error) {
         toast({
-          variant: 'destructive',
+          variant: 'error',
           title: 'Error',
           description: result.error,
         });
@@ -51,7 +51,7 @@ export default function LoginPage() {
     } catch (error) {
       console.error('Login error:', error);
       toast({
-        variant: 'destructive',
+        variant: 'error',
         title: 'Error',
         description: 'Something went wrong. Please try again.',
       });

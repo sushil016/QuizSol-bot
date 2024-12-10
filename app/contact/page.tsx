@@ -31,7 +31,7 @@ export default function ContactPage() {
           transition={{ delay: 0.3 }}
         >
           <p className="text-xl text-muted-foreground">
-            Have questions? We'd love to hear from you. Send us a message and we'll respond as soon as possible.
+            Have questions? Wed love to hear from you. Send us a message and we will respond as soon as possible.
           </p>
         </motion.div>
 

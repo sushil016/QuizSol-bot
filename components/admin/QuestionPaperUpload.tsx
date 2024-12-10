@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { Button } from '@/components/ui/button';
 import {
   Card,
@@ -16,10 +16,11 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { Input } from '@/components/ui/input';
-import { toast,useToast } from '@/hooks/use-toast';
+
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
 import { Download } from 'lucide-react';
+import { useToast } from "@/hooks/use-toast";
 
 interface QuestionPaper {
   id: string;
@@ -34,6 +35,7 @@ interface QuestionPaper {
 const examTypes = ['NEET', 'JEE', 'GATE'];
 
 export function QuestionPaperUpload() {
+  const { toast } = useToast();
   const [loading, setLoading] = useState(false);
   const [examType, setExamType] = useState('');
   const [year, setYear] = useState('');
@@ -42,11 +44,7 @@ export function QuestionPaperUpload() {
   const [paperType, setPaperType] = useState('pyq'); // 'pyq' or 'practice'
   const [papers, setPapers] = useState<QuestionPaper[]>([]);
 
-  useEffect(() => {
-    fetchPapers();
-  }, []);
-
-  const fetchPapers = async () => {
+  const fetchPapers = useCallback(async () => {
     try {
       const response = await fetch('/api/admin/question-papers');
       if (!response.ok) throw new Error('Failed to fetch papers');
@@ -56,10 +54,14 @@ export function QuestionPaperUpload() {
       toast({
         title: 'Error',
         description: 'Failed to fetch uploaded papers',
-        variant: 'destructive',
+        variant: 'error',
       });
     }
-  };
+  }, [toast]);
+
+  useEffect(() => {
+    fetchPapers();
+  }, [fetchPapers]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -67,7 +69,7 @@ export function QuestionPaperUpload() {
       toast({
         title: 'Error',
         description: 'Please fill all required fields',
-        variant: 'destructive',
+        variant: 'error',
       });
       return;
     }
@@ -109,7 +111,7 @@ export function QuestionPaperUpload() {
       toast({
         title: 'Error',
         description: 'Failed to upload question paper',
-        variant: 'destructive',
+        variant: 'error',
       });
     } finally {
       setLoading(false);

@@ -59,7 +59,7 @@ export default function RegisterPage() {
       router.push('/dashboard');
     } catch (error) {
       toast({
-        variant: 'destructive',
+        variant: 'error',
         title: 'Error',
         description: error instanceof Error ? error.message : 'Something went wrong',
       });

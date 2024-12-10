@@ -111,7 +111,7 @@ export default function PyqsPage() {
                       <CardContent className="space-y-4">
                         <Button 
                           className="w-full flex items-center gap-2" 
-                          asChild
+                          
                         >
                           <a 
                             href={paper.pdfUrl} 
