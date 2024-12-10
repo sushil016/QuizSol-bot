@@ -13,21 +13,21 @@ const Dialog: React.FC<DialogProps> = ({ open, onOpenChange, children }) => {
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black/80"
+      className="fixed inset-0 z-50 flex items-center justify-center "
       aria-modal="true"
       role="dialog"
     >
       <div
-        className="relative z-50 w-full max-w-lg bg-white p-6 shadow-lg sm:rounded-lg"
+        className="relative z-50 w-full max-w-lg  p-6 shadow-lg sm:rounded-lg"
         role="document"
       >
         {children}
         <button
-          className="absolute right-4 top-4 rounded-full bg-gray-200 p-1 hover:bg-gray-300"
+          className="absolute right-4 top-4 rounded-full p-1"
           onClick={() => onOpenChange(false)}
           aria-label="Close"
         >
-          ✕
+          ✕ 
         </button>
       </div>
       <div

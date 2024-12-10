@@ -1,117 +1,119 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
-import { Button } from '@/components/ui/button';
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from '@/components/ui/card';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
-import { Input } from '@/components/ui/input';
-
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { Label } from "@/components/ui/label";
-import { Download } from 'lucide-react';
+import { useState, FormEvent, useEffect } from 'react';
+import { useSession } from 'next-auth/react';
 import { useToast } from "@/hooks/use-toast";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Download, Trash2 } from 'lucide-react';
 
 interface QuestionPaper {
   id: string;
   title: string;
   examType: string;
-  year: number | null;
-  pdfUrl: string;
+  year?: number | null;
   isPractice: boolean;
-  createdAt: string;
+  pdfUrl: string;
 }
 
-const examTypes = ['NEET', 'JEE', 'GATE'];
-
 export function QuestionPaperUpload() {
-  const { toast } = useToast();
-  const [loading, setLoading] = useState(false);
+  const [paperType, setPaperType] = useState<'pyq' | 'practice'>('pyq');
   const [examType, setExamType] = useState('');
-  const [year, setYear] = useState('');
   const [title, setTitle] = useState('');
+  const [year, setYear] = useState('');
   const [file, setFile] = useState<File | null>(null);
-  const [paperType, setPaperType] = useState('pyq'); // 'pyq' or 'practice'
   const [papers, setPapers] = useState<QuestionPaper[]>([]);
+  const [loading, setLoading] = useState(false);
+  const { toast } = useToast();
 
-  const fetchPapers = useCallback(async () => {
+  // Fetch papers on component mount
+  useEffect(() => {
+    fetchPapers();
+  }, []);
+
+  const fetchPapers = async () => {
     try {
       const response = await fetch('/api/admin/question-papers');
       if (!response.ok) throw new Error('Failed to fetch papers');
       const data = await response.json();
       setPapers(data);
     } catch (error) {
+      console.error('Error fetching papers:', error);
       toast({
-        title: 'Error',
-        description: 'Failed to fetch uploaded papers',
-        variant: 'error',
+        title: "Error",
+        description: "Failed to fetch papers",
+        variant: "error",
       });
     }
-  }, [toast]);
+  };
 
-  useEffect(() => {
-    fetchPapers();
-  }, [fetchPapers]);
-
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    if (!examType || !title || !file || (!year && paperType === 'pyq')) {
-      toast({
-        title: 'Error',
-        description: 'Please fill all required fields',
-        variant: 'error',
-      });
-      return;
-    }
-
     setLoading(true);
-    try {
-      // Mock upload - Replace with actual upload logic
-      const pdfUrl = 'https://example.com/pdf-url';
 
+    try {
+      if (!file) {
+        toast({
+          title: "Error",
+          description: "Please select a file",
+          variant: "error",
+        });
+        return;
+      }
+
+      // First upload the file
+      const formData = new FormData();
+      formData.append('file', file);
+
+      const uploadResponse = await fetch('/api/upload', {
+        method: 'POST',
+        body: formData,
+      });
+
+      if (!uploadResponse.ok) {
+        throw new Error('Failed to upload file');
+      }
+
+      const { url: pdfUrl } = await uploadResponse.json();
+
+      // Then create the question paper record
       const response = await fetch('/api/admin/question-papers', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          examType,
-          year: paperType === 'pyq' ? parseInt(year) : null,
-          pdfUrl,
           title,
+          examType,
           isPractice: paperType === 'practice',
+          year: paperType === 'pyq' ? Number(year) : null,
+          pdfUrl
         }),
       });
 
-      if (!response.ok) throw new Error('Upload failed');
+      if (!response.ok) {
+        const error = await response.text();
+        throw new Error(error);
+      }
 
       toast({
-        title: 'Success',
-        description: 'Question paper uploaded successfully',
+        title: "Success",
+        description: "Paper uploaded successfully",
       });
 
-      // Reset form
-      setExamType('');
-      setYear('');
-      setTitle('');
-      setFile(null);
+      // Reset form and refresh papers list
       setPaperType('pyq');
+      setExamType('');
+      setTitle('');
+      setYear('');
+      setFile(null);
       fetchPapers();
+
     } catch (error) {
+      console.error('Upload error:', error);
       toast({
-        title: 'Error',
-        description: 'Failed to upload question paper',
-        variant: 'error',
+        title: "Error",
+        description: error instanceof Error ? error.message : "Failed to upload paper",
+        variant: "error",
       });
     } finally {
       setLoading(false);
@@ -119,84 +121,83 @@ export function QuestionPaperUpload() {
   };
 
   return (
-    <div className="space-y-8">
-      <Card className="max-w-2xl mx-auto">
+    <div className="space-y-8 p-4 max-w-4xl mx-auto">
+      <Card>
         <CardHeader>
           <CardTitle>Upload Question Paper</CardTitle>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit} className="space-y-6">
-            <div className="space-y-2">
-              <Label>Paper Type</Label>
-              <RadioGroup
-                defaultValue="pyq"
-                value={paperType}
-                onValueChange={setPaperType}
-                className="flex gap-4"
-              >
-                <div className="flex items-center space-x-2">
-                  <RadioGroupItem value="pyq" id="pyq" />
-                  <Label htmlFor="pyq">Previous Year Question</Label>
-                </div>
-                <div className="flex items-center space-x-2">
-                  <RadioGroupItem value="practice" id="practice" />
-                  <Label htmlFor="practice">Practice Paper</Label>
-                </div>
-              </RadioGroup>
-            </div>
-
-            <div className="space-y-2">
-              <Label>Exam Type</Label>
-              <Select value={examType} onValueChange={setExamType}>
-                <SelectTrigger>
-                  <SelectValue placeholder="Select exam type" />
-                </SelectTrigger>
-                <SelectContent>
-                  {examTypes.map((type) => (
-                    <SelectItem key={type} value={type}>
-                      {type}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-
-            {paperType === 'pyq' && (
+            <div className="grid gap-4">
               <div className="space-y-2">
-                <Label>Year</Label>
-                <Input
-                  type="number"
-                  value={year}
-                  onChange={(e) => setYear(e.target.value)}
-                  min="1900"
-                  max={new Date().getFullYear()}
-                  placeholder="Enter year"
+                <label className="text-sm font-medium">Paper Type</label>
+                <select 
+                  value={paperType}
+                  onChange={(e) => setPaperType(e.target.value as 'pyq' | 'practice')}
+                  className="w-full px-3 py-2 border rounded-md"
+                >
+                  <option value="pyq">Previous Year Question</option>
+                  <option value="practice">Practice Paper</option>
+                </select>
+              </div>
+
+              <div className="space-y-2">
+                <label className="text-sm font-medium">Exam Type</label>
+                <input
+                  type="text"
+                  value={examType}
+                  onChange={(e) => setExamType(e.target.value)}
+                  required
+                  className="w-full px-3 py-2 border rounded-md"
+                  placeholder="Enter exam type"
                 />
               </div>
-            )}
 
-            <div className="space-y-2">
-              <Label>Title</Label>
-              <Input
-                type="text"
-                value={title}
-                onChange={(e) => setTitle(e.target.value)}
-                placeholder="Enter paper title"
-              />
+              <div className="space-y-2">
+                <label className="text-sm font-medium">Title</label>
+                <input
+                  type="text"
+                  value={title}
+                  onChange={(e) => setTitle(e.target.value)}
+                  required
+                  className="w-full px-3 py-2 border rounded-md"
+                  placeholder="Enter paper title"
+                />
+              </div>
+
+              {paperType === 'pyq' && (
+                <div className="space-y-2">
+                  <label className="text-sm font-medium">Year</label>
+                  <input
+                    type="number"
+                    value={year}
+                    onChange={(e) => setYear(e.target.value)}
+                    required
+                    className="w-full px-3 py-2 border rounded-md"
+                    placeholder="Enter year"
+                  />
+                </div>
+              )}
+
+              <div className="space-y-2">
+                <label className="text-sm font-medium">PDF File</label>
+                <input
+                  type="file"
+                  accept=".pdf"
+                  onChange={(e) => setFile(e.target.files?.[0] || null)}
+                  required
+                  className="w-full"
+                />
+              </div>
             </div>
 
-            <div className="space-y-2">
-              <Label>PDF File</Label>
-              <Input
-                type="file"
-                accept=".pdf"
-                onChange={(e) => setFile(e.target.files?.[0] || null)}
-              />
-            </div>
-
-            <Button type="submit" disabled={loading} className="w-full">
+            <button
+              type="submit"
+              disabled={loading}
+              className="w-full bg-primary text-primary-foreground hover:bg-primary/90 px-4 py-2 rounded-md"
+            >
               {loading ? 'Uploading...' : 'Upload Paper'}
-            </Button>
+            </button>
           </form>
         </CardContent>
       </Card>
@@ -207,42 +208,35 @@ export function QuestionPaperUpload() {
         </CardHeader>
         <CardContent>
           <div className="rounded-md border">
-            <table className="min-w-full divide-y divide-gray-900">
-              <thead className="bg-muted/50">
+            <table className="min-w-full divide-y divide-gray-200">
+              <thead className="bg-muted">
                 <tr>
-                  <th className="px-6 py-3 text-left text-sm font-medium">Title</th>
-                  <th className="px-6 py-3 text-left text-sm font-medium">Type</th>
-                  <th className="px-6 py-3 text-left text-sm font-medium">Exam</th>
-                  <th className="px-6 py-3 text-left text-sm font-medium">Year</th>
-                  <th className="px-6 py-3 text-left text-sm font-medium">Actions</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase">Title</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase">Type</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase">Exam</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase">Year</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase">Actions</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-gray-200 bg-zinc-950">
+              <tbody className="bg-card divide-y divide-gray-200">
                 {papers.map((paper) => (
-                  <tr key={paper.id}>
-                    <td className="px-6 py-4 text-sm">{paper.title}</td>
-                    <td className="px-6 py-4 text-sm">
+                  <tr key={paper.id} className="hover:bg-muted/50">
+                    <td className="px-6 py-4 whitespace-nowrap text-sm">{paper.title}</td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-muted-foreground">
                       {paper.isPractice ? 'Practice' : 'PYQ'}
                     </td>
-                    <td className="px-6 py-4 text-sm">{paper.examType}</td>
-                    <td className="px-6 py-4 text-sm">{paper.year || '-'}</td>
-                    <td className="px-6 py-4 text-sm">
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        asChild
-                        className="inline-flex items-center gap-2"
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-muted-foreground">{paper.examType}</td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-muted-foreground">{paper.year || '-'}</td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm space-x-2">
+                      <a
+                        href={paper.pdfUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex items-center gap-2 px-3 py-1 rounded-md bg-secondary text-secondary-foreground hover:bg-secondary/90"
                       >
-                        <a
-                          href={paper.pdfUrl}
-                          download
-                          target="_blank"
-                          rel="noopener noreferrer"
-                        >
-                          <Download className="h-4 w-4" />
-                          Download
-                        </a>
-                      </Button>
+                        <Download className="h-4 w-4" />
+                        Download
+                      </a>
                     </td>
                   </tr>
                 ))}
@@ -253,4 +247,4 @@ export function QuestionPaperUpload() {
       </Card>
     </div>
   );
-} 
+}

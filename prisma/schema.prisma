@@ -31,10 +31,15 @@ model Question {
   category      String
   subCategory   String
   difficulty    Difficulty     @default(MEDIUM)
+  questionImageUrl    String?
+  explanationImageUrl String?
   createdAt     DateTime       @default(now())
   updatedAt     DateTime       @updatedAt
   activities    UserActivity[]
   bookmarks     Bookmark[]
+  usageCount    Int            @default(0)
+  questionSet   QuestionSet?   @relation(fields: [questionSetId], references: [id])
+  questionSetId String?
 }
 
 model UserActivity {
@@ -130,7 +135,7 @@ enum ExamType {
 model QuestionPaper {
   id        String   @id @default(cuid())
   examType  ExamType
-  year      Int
+  year      Int?
   pdfUrl    String
   title     String
   isPractice Boolean  @default(false)
@@ -138,4 +143,73 @@ model QuestionPaper {
   updatedAt DateTime @updatedAt
   uploadedBy User     @relation(fields: [userId], references: [id])
   userId    String
+}
+
+model Exam {
+  id          String   @id @default(cuid())
+  name        String
+  category    String
+  description String?
+  duration    Int
+  totalMarks  Int
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model PDF {
+  id          String   @id @default(cuid())
+  title       String
+  url         String
+  category    String
+  uploadedBy  String
+  createdAt   DateTime @default(now())
+}
+
+model Analytics {
+  id                String   @id @default(cuid())
+  questionId        String
+  averageSolveTime  Float
+  correctAttempts   Int      @default(0)
+  totalAttempts     Int      @default(0)
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+}
+
+model ExamCategory {
+  id            String         @id @default(cuid())
+  name          String         @unique
+  description   String?
+  subCategories SubCategory[]
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+}
+
+model SubCategory {
+  id            String         @id @default(cuid())
+  name          String
+  year          Int
+  categoryId    String
+  category      ExamCategory   @relation(fields: [categoryId], references: [id])
+  questionSets  QuestionSet[]
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+
+  @@unique([name, year, categoryId])
+}
+
+model QuestionSet {
+  id            String       @id @default(cuid())
+  title         String
+  description   String?
+  subCategoryId String
+  subCategory   SubCategory  @relation(fields: [subCategoryId], references: [id])
+  questions     Question[]
+  status        SetStatus    @default(DRAFT)
+  createdAt     DateTime     @default(now())
+  updatedAt     DateTime     @updatedAt
+}
+
+enum SetStatus {
+  DRAFT
+  PUBLISHED
 }

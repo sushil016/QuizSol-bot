@@ -45,16 +45,22 @@ export default function PyqsPage() {
     
     try {
       const response = await fetch(`/api/question-papers?examType=${examType}`);
-      if (!response.ok) throw new Error('Failed to fetch papers');
       const data = await response.json();
+      
+      if (!response.ok) {
+        throw new Error(data.error || 'Failed to fetch papers');
+      }
+      
       setPapers(data);
     } catch (error) {
       console.error('Error fetching papers:', error);
+      setPapers([]); // Set empty array on error
+      // Optionally show an error message to the user
     }
   };
 
   return (
-    <div className="container mx-auto py-10">
+    <div className="container py-10 max-w-7xl mx-auto">
       {/* Exam Selection Dialog */}
       <Dialog open={showExamDialog} onOpenChange={setShowExamDialog}>
         <DialogContent className="sm:max-w-md">
@@ -69,7 +75,7 @@ export default function PyqsPage() {
                 className="w-full text-left flex flex-col items-start p-4"
                 onClick={() => handleExamSelect(exam.id)}
               >
-                <span className="font-bold">{exam.title}</span>
+                <span className="font-bold text-primary-foreground">{exam.title}</span>
                 <span className="text-sm text-muted-foreground">{exam.description}</span>
               </Button>
             ))}
@@ -80,15 +86,15 @@ export default function PyqsPage() {
       {/* Main Content */}
       {selectedExam && (
         <>
-          <div className="flex justify-between items-center mb-8">
+          <div className="flex justify-between items-center mb-8 max-w-7xl mx-auto">
             <h1 className="text-3xl font-bold">{selectedExam} Resources</h1>
             <Button variant="outline" onClick={() => setShowExamDialog(true)}>
               Change Exam
             </Button>
           </div>
 
-          <Tabs defaultValue="pyqs" className="space-y-4">
-            <TabsList className="grid max-w-3xl justify-center items-center grid-cols-2">
+          <Tabs defaultValue="pyqs" className="space-y-4 ">
+            <TabsList className="grid justify-center items-center grid-cols-2 rounded-md">
               <TabsTrigger value="pyqs">Previous Year Papers</TabsTrigger>
               <TabsTrigger value="practice">Practice Papers</TabsTrigger>
             </TabsList>

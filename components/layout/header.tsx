@@ -15,11 +15,14 @@ import { User, LogOut, Settings, Menu, Moon, Sun } from 'lucide-react';
 import { useState } from 'react';
 import { Button } from '../ui/button';
 import { useTheme } from "next-themes";
+import { useRouter } from 'next/navigation';
 
 export function Header() {
   const { data: session } = useSession();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const { theme, setTheme } = useTheme();
+
+  const router = useRouter();
 
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
@@ -72,6 +75,12 @@ export function Header() {
                       </div>
                     </DropdownMenuLabel>
                     <DropdownMenuSeparator />
+                    {session.user.role === 'ADMIN' && (
+                      <DropdownMenuItem>
+                        <User className="mr-2 h-4 w-4" />
+                        <button onClick={() => router.push('/admin')}>Admin Dashboard</button>
+                      </DropdownMenuItem>
+                    )}
                     <DropdownMenuItem>
                       <User className="mr-2 h-4 w-4" />
                       <span>Profile</span>

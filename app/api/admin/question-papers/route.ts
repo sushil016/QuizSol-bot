@@ -4,8 +4,13 @@ import { authOptions } from '@/lib/auth';
 import prisma from '@/lib/prisma';
 import { checkAdmin } from '@/middleware/adminAuth';
 
+// Define valid exam types constant that can be exported and reused
+export const VALID_EXAM_TYPES = ['NEET', 'JEE', 'GATE'] as const;
+type ExamType = typeof VALID_EXAM_TYPES[number];
+
 export async function POST(req: Request) {
   try {
+    // Check authentication
     const session = await getServerSession(authOptions);
     if (!session || !(await checkAdmin(session))) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
@@ -14,10 +19,35 @@ export async function POST(req: Request) {
     const data = await req.json();
     const { examType, year, pdfUrl, title, isPractice } = data;
 
+    // // Validate required fields
+    // if (!examType || !pdfUrl || !title) {
+    //   return NextResponse.json(
+    //     { error: 'Missing required fields' },
+    //     { status: 400 }
+    //   );
+    // }
+
+    // // Validate exam type
+    // if (!VALID_EXAM_TYPES.includes(examType)) {
+    //   return NextResponse.json(
+    //     { error: 'Invalid exam type' },
+    //     { status: 400 }
+    //   );
+    // }
+
+    // // Validate year if it's a PYQ (not practice paper)
+    // if (!isPractice && (!year || isNaN(year))) {
+    //   return NextResponse.json(
+    //     { error: 'Year is required for previous year questions' },
+    //     { status: 400 }
+    //   );
+    // }
+
+    // Create question paper
     const questionPaper = await prisma.questionPaper.create({
       data: {
         examType,
-        year,
+        year: isPractice ? null : Number(year),
         pdfUrl,
         title,
         isPractice,
@@ -27,7 +57,14 @@ export async function POST(req: Request) {
 
     return NextResponse.json(questionPaper);
   } catch (error) {
-    return NextResponse.json({ error: 'Error creating question paper' }, { status: 500 });
+    console.error('Error creating question paper:', error);
+    return NextResponse.json(
+      { 
+        error: 'Error creating question paper',
+        details: (error as Error).message 
+      }, 
+      { status: 500 }
+    );
   }
 }
 

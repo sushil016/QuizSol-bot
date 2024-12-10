@@ -1,10 +1,8 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Textarea } from '@/components/ui/textarea';
 import { Mail, Phone, MapPin } from 'lucide-react';
+import { ContactForm } from '@/components/ContactForm';
 
 export default function ContactPage() {
   return (
@@ -46,45 +44,26 @@ export default function ContactPage() {
               <Mail className="h-6 w-6 text-primary" />
               <div>
                 <h3 className="text-lg font-semibold">Email</h3>
-                <p className="text-muted-foreground">support@quizmaster.com</p>
+                <p className="text-muted-foreground">support@solutionbot.com</p>
               </div>
             </div>
             <div className="flex items-center space-x-4">
               <Phone className="h-6 w-6 text-primary" />
               <div>
                 <h3 className="text-lg font-semibold">Phone</h3>
-                <p className="text-muted-foreground">+1 (555) 123-4567</p>
+                <p className="text-muted-foreground">+91 9876543210</p>
               </div>
             </div>
             <div className="flex items-center space-x-4">
               <MapPin className="h-6 w-6 text-primary" />
               <div>
                 <h3 className="text-lg font-semibold">Location</h3>
-                <p className="text-muted-foreground">123 Quiz Street, Learning City, ED 12345</p>
+                <p className="text-muted-foreground">Abc address</p>
               </div>
             </div>
           </motion.div>
 
-          <motion.form 
-            className="space-y-6"
-            initial={{ opacity: 0, x: 20 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ delay: 0.4 }}
-          >
-            <div className="space-y-2">
-              <label className="text-sm font-medium">Name</label>
-              <Input placeholder="Your name" />
-            </div>
-            <div className="space-y-2">
-              <label className="text-sm font-medium">Email</label>
-              <Input type="email" placeholder="your@email.com" />
-            </div>
-            <div className="space-y-2">
-              <label className="text-sm font-medium">Message</label>
-              <Textarea placeholder="Your message" className="min-h-[150px]" />
-            </div>
-            <Button className="w-full">Send Message</Button>
-          </motion.form>
+          <ContactForm />
         </div>
       </motion.div>
     </div>

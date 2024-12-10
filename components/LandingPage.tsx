@@ -68,7 +68,7 @@ export function LandingPage() {
                 viewport={{ once: true }}
                 transition={{ delay: index * 0.1 }}
               >
-                <Card className="hover:shadow-lg transition-shadow duration-300 border-primary/10 bg-background/50 backdrop-blur-sm">
+                <Card className="hover:shadow-lg transition-shadow duration-300 border-primary/10 bg-background backdrop-blur-sm">
                   <CardHeader>
                     <CardTitle className="flex items-center gap-2">
                       <span className="text-2xl">{feature.icon}</span>

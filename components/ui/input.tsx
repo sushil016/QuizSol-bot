@@ -12,7 +12,7 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
       width: '100%',
       borderRadius: '0.375rem', // rounded-md
       border: '1px solid #d1d5db', // border-input
-      backgroundColor: 'white', // bg-background
+   // bg-background
       paddingLeft: '0.75rem', // px-3
       paddingRight: '0.75rem',
       paddingTop: '0.5rem', // py-2
@@ -58,7 +58,7 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
 function parseStyles(className: string): React.CSSProperties {
   const styleMap: {[key: string]: React.CSSProperties} = {
     'text-red-500': { color: '#ef4444' },
-    'bg-gray-100': { backgroundColor: '#f3f4f6' },
+    
     // Add more custom class to style mappings as needed
   };
 

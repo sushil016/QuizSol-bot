@@ -16,6 +16,5 @@ export const adminAuth = async () => {
   const user = await prisma.user.findFirst({
     where: { role: 'ADMIN' }
   });
-  if (!user) throw new Error('No admin found');
-  return user;
+  return user || null;
 };

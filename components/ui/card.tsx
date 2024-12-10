@@ -7,7 +7,7 @@ interface CardProps extends React.HTMLAttributes<HTMLDivElement> {
 
 const Card = ({ children, className = '', ...props }: CardProps) => (
   <div 
-    className={`rounded-lg border bg-white text-gray-800 shadow-sm ${className}`} 
+    className={`rounded-lg border bg-background text-muted-foreground shadow-sm ${className}`} 
     {...props}
   >
     {children}
@@ -28,7 +28,7 @@ const CardTitle = ({ children, className = '', ...props }: React.HTMLAttributes<
   className?: string;
 }) => (
   <h3 
-    className={`text-2xl font-semibold leading-none tracking-tight text-gray-900 ${className}`} 
+    className={`text-2xl font-semibold leading-none tracking-tight  ${className}`} 
     {...props}
   >
     {children}
@@ -40,7 +40,7 @@ const CardDescription = ({ children, className = '', ...props }: React.HTMLAttri
   className?: string;
 }) => (
   <p 
-    className={`text-sm text-gray-500 ${className}`} 
+    className={`text-sm  ${className}`} 
     {...props}
   >
     {children}

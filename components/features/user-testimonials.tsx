@@ -109,8 +109,8 @@ export function UserTestimonials() {
             className="flex-shrink-0 w-[300px] mx-4"
           >
             <Card className="h-full">
-              <CardContent className="p-6 flex flex-col items-center text-center">
-                <Avatar className="w-24 h-24 mb-4">
+              <CardContent className="p-6 flex flex-col items-center text-center pt-3">
+                <Avatar className="w-20 h-20 mb-4">
                   <AvatarImage src={testimonial.photo} alt={testimonial.name} />
                   <AvatarFallback>{testimonial.name.split(' ').map(n => n[0]).join('')}</AvatarFallback>
                 </Avatar>
