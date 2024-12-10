@@ -10,6 +10,7 @@ import React, {
 } from 'react';
 import { ChevronRight, Check, Circle } from 'lucide-react';
 
+
 interface DropdownMenuProps {
   children: ReactNode;
 }
@@ -74,7 +75,7 @@ const DropdownMenuContent: React.FC<{
   if (!isOpen) return null;
 
   return (
-    <div className="absolute z-50 min-w-[8rem] rounded-md border bg-white shadow-lg p-1 mt-1">
+    <div className="absolute z-50 min-w-[8rem] rounded-md border bg-background shadow-lg p-1 mt-1 right-0">
       {children}
     </div>
   );
@@ -91,7 +92,7 @@ const DropdownMenuItem: React.FC<DropdownMenuItemProps> = ({
     className={`
       relative flex cursor-default select-none items-center 
       rounded-sm px-2 py-1.5 text-sm outline-none 
-      transition-colors hover:bg-gray-100
+      transition-colors hover:bg-accent hover:text-accent-foreground
       ${inset ? 'pl-8' : ''}
       ${disabled ? 'opacity-50 pointer-events-none' : ''}
       ${className}
@@ -110,7 +111,7 @@ const DropdownMenuLabel: React.FC<DropdownMenuItemProps> = ({
 }) => (
   <div
     className={`
-      px-2 py-1.5 text-sm font-semibold text-gray-500
+      px-2 py-1.5 text-sm font-semibold text-muted-foreground
       ${inset ? 'pl-8' : ''}
       ${className}
     `}
@@ -121,7 +122,7 @@ const DropdownMenuLabel: React.FC<DropdownMenuItemProps> = ({
 );
 
 const DropdownMenuSeparator: React.FC = () => (
-  <div className="-mx-1 my-1 h-px bg-gray-200" />
+  <div className="-mx-1 my-1 h-px bg-border" />
 );
 
 const DropdownMenuSubTrigger: React.FC<DropdownMenuItemProps & SubMenuProps> = ({ 
@@ -136,7 +137,7 @@ const DropdownMenuSubTrigger: React.FC<DropdownMenuItemProps & SubMenuProps> = (
       className={`
         relative flex cursor-default select-none items-center 
         rounded-sm px-2 py-1.5 text-sm outline-none 
-        hover:bg-gray-100
+        hover:bg-accent hover:text-accent-foreground
         ${inset ? 'pl-8' : ''}
       `}
       onMouseEnter={() => setIsSubOpen(true)}
@@ -145,7 +146,7 @@ const DropdownMenuSubTrigger: React.FC<DropdownMenuItemProps & SubMenuProps> = (
       {label}
       <ChevronRight className="ml-auto h-4 w-4" />
       {isSubOpen && (
-        <div className="absolute left-full top-0 min-w-[8rem] rounded-md border bg-white shadow-lg p-1">
+        <div className="absolute left-full top-0 min-w-[8rem] rounded-md border bg-background shadow-lg p-1">
           {children}
         </div>
       )}

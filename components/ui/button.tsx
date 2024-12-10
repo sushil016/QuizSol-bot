@@ -25,7 +25,7 @@ export const Button = ({
     destructive: 'bg-red-500 text-white hover:bg-red-600 focus:ring-red-500',
     outline: 'border border-gray-300 bg-white text-gray-700 hover:bg-gray-50 focus:ring-blue-300',
     secondary: 'bg-gray-200 text-gray-800 hover:bg-gray-300 focus:ring-gray-500',
-    ghost: 'bg-transparent text-gray-700 hover:bg-gray-100 focus:ring-blue-300',
+    ghost: 'bg-transparent text-gray-700 hover:bg-gray-100/10 focus:ring-zinc-600',
     link: 'text-blue-600 underline hover:text-blue-800 focus:ring-blue-300'
   };
 
