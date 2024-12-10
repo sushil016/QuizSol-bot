@@ -4,9 +4,6 @@ import { authOptions } from '@/lib/auth';
 import prisma from '@/lib/prisma';
 import { checkAdmin } from '@/middleware/adminAuth';
 
-// Define valid exam types constant that can be exported and reused
-export const VALID_EXAM_TYPES = ['NEET', 'JEE', 'GATE'] as const;
-type ExamType = typeof VALID_EXAM_TYPES[number];
 
 export async function POST(req: Request) {
   try {

@@ -5,15 +5,12 @@ import { authOptions } from "@/lib/auth"
 
 export async function GET() {
   try {
-    const categories = await prisma.examCategory.findMany({
+    const subCategories = await prisma.subCategory.findMany({
       include: {
-        subCategories: true,
-      },
-      orderBy: {
-        name: 'asc',
+        category: true,
       },
     })
-    return NextResponse.json(categories)
+    return NextResponse.json(subCategories)
   } catch (error) {
     return NextResponse.json({ error: "Internal Server Error" }, { status: 500 })
   }
@@ -27,13 +24,13 @@ export async function POST(req: Request) {
     }
 
     const body = await req.json()
-    const category = await prisma.examCategory.create({
+    const subCategory = await prisma.subCategory.create({
       data: body,
       include: {
-        subCategories: true,
+        category: true,
       },
     })
-    return NextResponse.json(category)
+    return NextResponse.json(subCategory)
   } catch (error) {
     return NextResponse.json({ error: "Internal Server Error" }, { status: 500 })
   }

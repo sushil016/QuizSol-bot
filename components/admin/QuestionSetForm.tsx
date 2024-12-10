@@ -9,6 +9,7 @@ import { useToast } from "@/hooks/use-toast"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Label } from "@/components/ui/label"
 import { Trash2, Plus } from "lucide-react"
+import { SetStatus } from "@prisma/client"
 
 interface SubCategory {
   id: string
@@ -31,6 +32,11 @@ interface Question {
   difficulty: string
 }
 
+interface Category {
+  id: string
+  name: string
+}
+
 export function QuestionSetForm() {
   const [subCategories, setSubCategories] = useState<SubCategory[]>([])
   const [title, setTitle] = useState("")
@@ -49,9 +55,11 @@ export function QuestionSetForm() {
     difficulty: "MEDIUM"
   })
   const { toast } = useToast()
+  const [categories, setCategories] = useState<Category[]>([])
 
   useEffect(() => {
     fetchSubCategories()
+    fetchCategories()
   }, [])
 
   const fetchSubCategories = async () => {
@@ -64,6 +72,21 @@ export function QuestionSetForm() {
       toast({
         title: "Error",
         description: "Failed to fetch subcategories",
+        variant: "error",
+      })
+    }
+  }
+
+  const fetchCategories = async () => {
+    try {
+      const response = await fetch("/api/admin/exam-categories")
+      if (!response.ok) throw new Error("Failed to fetch categories")
+      const data = await response.json()
+      setCategories(data)
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to fetch categories",
         variant: "error",
       })
     }
@@ -108,15 +131,15 @@ export function QuestionSetForm() {
     setQuestions(questions.filter((_, i) => i !== index))
   }
 
-  const handleSaveAsDraft = async () => {
-    await handleSubmit("DRAFT")
+  const handleSaveAsDraft = async (status: SetStatus) => {
+    await handleSubmit(status)
   }
 
-  const handlePublish = async () => {
-    await handleSubmit("PUBLISHED")
+  const handlePublish = async (status: SetStatus) => {
+    await handleSubmit(status)
   }
 
-  const handleSubmit = async (status: "DRAFT" | "PUBLISHED") => {
+  const handleSubmit = async (status: SetStatus) => {
     if (!title || !subCategoryId || questions.length === 0) {
       toast({
         title: "Validation Error",
@@ -268,9 +291,11 @@ export function QuestionSetForm() {
                 <SelectValue placeholder="Select category" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="NEET">NEET</SelectItem>
-                <SelectItem value="JEE">JEE</SelectItem>
-                <SelectItem value="GATE">GATE</SelectItem>
+                {categories.map((category) => (
+                  <SelectItem key={category.id} value={category.name}>
+                    {category.name}
+                  </SelectItem>
+                ))}
               </SelectContent>
             </Select>
           </div>
@@ -355,10 +380,10 @@ export function QuestionSetForm() {
       )}
 
       <div className="flex space-x-4">
-        <Button variant="outline" onClick={handleSaveAsDraft}>
+        <Button variant="outline" onClick={() => handleSaveAsDraft("DRAFT" as SetStatus)}>
           Save as Draft
         </Button>
-        <Button onClick={handlePublish}>
+        <Button onClick={() => handlePublish("PUBLISHED" as SetStatus)}>
           Publish
         </Button>
       </div>

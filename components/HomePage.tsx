@@ -60,11 +60,11 @@ export function HomePage() {
                 <>
                   <button className="p-3 bg-gradient-to-r from-orange-500 via-purple-500 to-yellow-500 text-white rounded-lg text-base font-bold
                   [background-size:300%] animate-moving-gradient">
-                    <Link href="/dashboard">Go to Dashboard</Link>
+                    <Link href="/exam">start solving Now</Link>
                   </button>
                   <Button  variant="outline" size="lg">
                     <Link href="/pyqs">Download PYQs</Link>
-                  </Button>
+                  </Button> 
                 </>
               )}
             </motion.div>
