@@ -56,7 +56,13 @@ export default function RegisterPage() {
         title: 'Success',
         description: 'Account created successfully!',
       });
+     const session = await fetch('/api/auth/session');
+     const userData = await session.json();
+     if (userData?.user?.role === 'ADMIN') {
+      router.push('/admin/dashboard');
+     }else{
       router.push('/dashboard');
+     }
     } catch (error) {
       toast({
         variant: 'error',

@@ -36,8 +36,6 @@ export default function LoginPage() {
         password: data.password,
       });
 
-      console.log('Sign in result:', result);
-
       if (result?.error) {
         toast({
           variant: 'error',
@@ -47,7 +45,15 @@ export default function LoginPage() {
         return;
       }
 
-      router.push('/dashboard');
+      // Get user role from session
+      const session = await fetch('/api/auth/session');
+      const userData = await session.json();
+      
+      if (userData?.user?.role === 'ADMIN') {
+        router.push('/admin/dashboard');
+      } else {
+        router.push('/dashboard');
+      }
     } catch (error) {
       console.error('Login error:', error);
       toast({
