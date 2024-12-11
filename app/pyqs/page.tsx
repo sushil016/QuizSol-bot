@@ -1,7 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
+import { useState, useEffect, useCallback } from 'react';
 import {
   Dialog,
   DialogContent,
@@ -17,15 +16,22 @@ import {
 } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Download } from 'lucide-react';
+import { useToast } from "@/hooks/use-toast";
 
 interface QuestionPaper {
   id: string;
   title: string;
-  examType: string;
   year: number | null;
   pdfUrl: string;
   isPractice: boolean;
   subCategoryId: string;
+  subCategory: {
+    name: string;
+    year: number;
+    category: {
+      name: string;
+    };
+  };
 }
 
 interface Category {
@@ -45,13 +51,9 @@ export default function PyqsPage() {
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [papers, setPapers] = useState<QuestionPaper[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
-  const router = useRouter();
+  const { toast } = useToast();
 
-  useEffect(() => {
-    fetchCategories();
-  }, []);
-
-  const fetchCategories = async () => {
+  const fetchCategories = useCallback(async () => {
     try {
       const response = await fetch('/api/admin/exam-categories');
       if (!response.ok) throw new Error('Failed to fetch categories');
@@ -59,8 +61,42 @@ export default function PyqsPage() {
       setCategories(data);
     } catch (error) {
       console.error('Error fetching categories:', error);
+      toast({
+        title: "Error",
+        description: "Failed to fetch categories",
+        variant: "error",
+      });
     }
-  };
+  }, [toast]);
+
+  useEffect(() => {
+    fetchCategories();
+  }, [fetchCategories]);
+
+  const fetchPapers = useCallback(async (categoryId: string) => {
+    try {
+      const category = categories.find(c => c.id === categoryId);
+      if (!category) return;
+
+      const response = await fetch(`/api/question-papers?categoryName=${category.name}`);
+      if (!response.ok) throw new Error('Failed to fetch papers');
+      const data = await response.json();
+      setPapers(data);
+    } catch (error) {
+      console.error('Error fetching papers:', error);
+      toast({
+        title: "Error",
+        description: "Failed to fetch papers",
+        variant: "error",
+      });
+    }
+  }, [categories, toast]);
+
+  useEffect(() => {
+    if (selectedCategory) {
+      fetchPapers(selectedCategory);
+    }
+  }, [selectedCategory, fetchPapers]);
 
   const handleCategorySelect = async (categoryId: string) => {
     setSelectedCategory(categoryId);
@@ -130,7 +166,7 @@ export default function PyqsPage() {
                           <CardContent className="space-y-4">
                             <div className="flex space-x-2">
                               <Button asChild>
-                                <a href={paper.pdfUrl} target="_blank">
+                                <a href={paper.pdfUrl} target="_blank" rel="noopener noreferrer">
                                   View PDF
                                 </a>
                               </Button>

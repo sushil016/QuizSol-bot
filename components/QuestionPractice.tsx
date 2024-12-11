@@ -7,11 +7,12 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { ChevronLeft, ChevronRight } from "lucide-react"
 import { Progress } from "@/components/ui/progress"
 import { useRouter } from "next/navigation"
+import Image from 'next/image'
 
 interface Question {
   id: string
   questionText: string
-  options: string[]
+  options: string
   correctAnswer: number
   explanation?: string
   questionImageUrl?: string
@@ -63,6 +64,7 @@ export function QuestionPractice({ questions }: { questions: Question[] }) {
   }
 
   const currentQuestion = questions[currentQuestionIndex]
+  const parsedOptions = JSON.parse(currentQuestion.options)
 
   return (
     <div className="space-y-6 max-w-4xl mx-auto">
@@ -92,17 +94,23 @@ export function QuestionPractice({ questions }: { questions: Question[] }) {
             </CardHeader>
             <CardContent className="space-y-4">
               {currentQuestion.questionImageUrl && (
-                <motion.img
+                <motion.div
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
-                  src={currentQuestion.questionImageUrl}
-                  alt="Question"
-                  className="max-w-full rounded-lg"
-                />
+                >
+                  <Image
+                    src={currentQuestion.questionImageUrl}
+                    alt="Question"
+                    width={800}
+                    height={600}
+                    className="max-w-full rounded-lg"
+                    priority
+                  />
+                </motion.div>
               )}
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {currentQuestion.options.map((option: string, index: number) => (
+                {parsedOptions.map((option: string, index: number) => (
                   <motion.div
                     key={index}
                     initial={{ opacity: 0, y: 10 }}
@@ -140,10 +148,13 @@ export function QuestionPractice({ questions }: { questions: Question[] }) {
                     <h3 className="font-semibold mb-2">Explanation</h3>
                     <p>{currentQuestion.explanation}</p>
                     {currentQuestion.explanationImageUrl && (
-                      <img
+                      <Image
                         src={currentQuestion.explanationImageUrl}
                         alt="Explanation"
+                        width={800}
+                        height={600}
                         className="max-w-full mt-2 rounded-lg"
+                        priority
                       />
                     )}
                   </motion.div>

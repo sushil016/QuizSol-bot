@@ -6,7 +6,7 @@ import { checkAdmin } from '@/middleware/adminAuth';
 export async function POST(req: Request) {
   try {
     const session = await getServerSession(authOptions);
-    if (!session || !(await checkAdmin(session))) {
+    if (!session) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
