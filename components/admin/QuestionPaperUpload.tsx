@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, FormEvent, useEffect } from 'react';
+import { useState, FormEvent, useEffect, useCallback } from 'react';
 import { useSession } from 'next-auth/react';
 import { useToast } from "@/hooks/use-toast";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -41,16 +41,7 @@ export function QuestionPaperUpload() {
   const [selectedCategory, setSelectedCategory] = useState("")
   const [selectedSubCategory, setSelectedSubCategory] = useState("")
 
-  // Fetch papers on component mount
-  useEffect(() => {
-    fetchPapers();
-  }, []);
-
-  useEffect(() => {
-    fetchCategories()
-  }, [])
-
-  const fetchPapers = async () => {
+  const fetchPapers = useCallback(async () => {
     try {
       const response = await fetch('/api/admin/question-papers');
       if (!response.ok) throw new Error('Failed to fetch papers');
@@ -64,9 +55,15 @@ export function QuestionPaperUpload() {
         variant: "error",
       });
     }
-  };
+  }, [toast]);
 
-  const fetchCategories = async () => {
+  useEffect(() => {
+    fetchPapers();
+  }, [fetchPapers]);
+
+ 
+
+  const fetchCategories = useCallback(async () => {
     try {
       const response = await fetch('/api/admin/exam-categories')
       if (!response.ok) throw new Error('Failed to fetch categories')
@@ -80,7 +77,11 @@ export function QuestionPaperUpload() {
         variant: "error",
       })
     }
-  }
+  }, [toast])
+
+  useEffect(() => {
+    fetchCategories()
+  }, [fetchCategories])
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();

@@ -6,12 +6,16 @@ cloudinary.config({
   api_secret: process.env.CLOUDINARY_API_SECRET,
 })
 
+interface CloudinaryResponse {
+  secure_url: string;
+}
+
 export const uploadToPDF = async (file: File): Promise<string> => {
   try {
     const bytes = await file.arrayBuffer()
     const buffer = Buffer.from(bytes)
     
-    const response = await new Promise((resolve, reject) => {
+    const response = await new Promise<CloudinaryResponse>((resolve, reject) => {
       cloudinary.uploader.upload_stream(
         {
           resource_type: 'raw',
@@ -20,7 +24,7 @@ export const uploadToPDF = async (file: File): Promise<string> => {
         },
         (error, result) => {
           if (error) reject(error)
-          resolve(result)
+          resolve(result as CloudinaryResponse)
         }
       ).end(buffer)
     })

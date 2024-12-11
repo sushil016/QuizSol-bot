@@ -2,7 +2,6 @@ import { NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth';
 import prisma from '@/lib/prisma';
-import { checkAdmin } from '@/middleware/adminAuth';
 
 
 export async function POST(req: Request) {
@@ -14,7 +13,6 @@ export async function POST(req: Request) {
 
     const body = await req.json();
     
-    // Get user ID
     const user = await prisma.user.findUnique({
       where: { email: session.user.email },
     });
@@ -36,7 +34,7 @@ export async function POST(req: Request) {
     return NextResponse.json(
       { 
         error: 'Error creating question paper',
-        details: error.message 
+        details: error instanceof Error ? error.message : 'Unknown error'
       }, 
       { status: 500 }
     );

@@ -4,28 +4,29 @@ import prisma from '@/lib/prisma';
 export async function GET(req: Request) {
   try {
     const { searchParams } = new URL(req.url);
-    const examType = searchParams.get('examType');
+    const categoryName = searchParams.get('categoryName');
 
-    // Check if examType is provided
-    if (!examType) {
+    if (!categoryName) {
       return NextResponse.json(
-        { error: 'examType parameter is required' },
-        { status: 400 }
-      );
-    }
-
-    // Update validExamTypes to match the frontend options
-    const validExamTypes = ['NEET', 'JEE', 'GATE'];
-    if (!validExamTypes.includes(examType)) {
-      return NextResponse.json(
-        { error: 'Invalid examType provided' },
+        { error: 'categoryName parameter is required' },
         { status: 400 }
       );
     }
 
     const papers = await prisma.questionPaper.findMany({
       where: {
-        examType: examType as any,
+        subCategory: {
+          category: {
+            name: categoryName
+          }
+        }
+      },
+      include: {
+        subCategory: {
+          include: {
+            category: true
+          }
+        }
       },
       orderBy: [
         { year: 'desc' },
@@ -33,14 +34,11 @@ export async function GET(req: Request) {
       ],
     });
 
-    // Return empty array if no papers found instead of throwing an error
     return NextResponse.json(papers || []);
-    
   } catch (error) {
     console.error('Error fetching question papers:', error);
-    
     return NextResponse.json(
-      { error: 'Error fetching question papers', details: (error as Error).message },
+      { error: 'Error fetching question papers' },
       { status: 500 }
     );
   }

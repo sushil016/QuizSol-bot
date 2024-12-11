@@ -12,9 +12,16 @@ export default async function QuestionPapersPage() {
   }
 
   const papers = await prisma.questionPaper.findMany({
+    include: {
+      subCategory: {
+        include: {
+          category: true
+        }
+      }
+    },
     orderBy: [
-      { examType: 'asc' },
       { year: 'desc' },
+      { createdAt: 'desc' },
     ],
   });
 
@@ -29,7 +36,7 @@ export default async function QuestionPapersPage() {
               <CardTitle>{paper.title}</CardTitle>
             </CardHeader>
             <CardContent>
-              <p>Exam: {paper.examType}</p>
+              <p>Exam: {paper.subCategory.category.name}</p>
               <p>Year: {paper.year}</p>
               <Link
                 href={paper.pdfUrl}
