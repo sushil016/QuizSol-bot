@@ -12,7 +12,7 @@ export function HomePage() {
 
   return (
     <div className="min-h-[calc(100vh-4rem)] flex items-center">
-      <div className="container mx-auto px-16">
+      <div className="container mx-auto px-3">
         <div className="flex flex-col md:flex-row items-center gap-8">
           {/* Left side content (60%) */}
           <motion.div 

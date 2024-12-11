@@ -7,58 +7,36 @@ import { checkAdmin } from '@/middleware/adminAuth';
 
 export async function POST(req: Request) {
   try {
-    // Check authentication
     const session = await getServerSession(authOptions);
-    if (!session || !(await checkAdmin(session))) {
+    if (!session?.user?.email) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const data = await req.json();
-    const { examType, year, pdfUrl, title, isPractice } = data;
+    const body = await req.json();
+    
+    // Get user ID
+    const user = await prisma.user.findUnique({
+      where: { email: session.user.email },
+    });
 
-    // // Validate required fields
-    // if (!examType || !pdfUrl || !title) {
-    //   return NextResponse.json(
-    //     { error: 'Missing required fields' },
-    //     { status: 400 }
-    //   );
-    // }
+    if (!user) {
+      return NextResponse.json({ error: 'User not found' }, { status: 404 });
+    }
 
-    // // Validate exam type
-    // if (!VALID_EXAM_TYPES.includes(examType)) {
-    //   return NextResponse.json(
-    //     { error: 'Invalid exam type' },
-    //     { status: 400 }
-    //   );
-    // }
-
-    // // Validate year if it's a PYQ (not practice paper)
-    // if (!isPractice && (!year || isNaN(year))) {
-    //   return NextResponse.json(
-    //     { error: 'Year is required for previous year questions' },
-    //     { status: 400 }
-    //   );
-    // }
-
-    // Create question paper
-    const questionPaper = await prisma.questionPaper.create({
+    const paper = await prisma.questionPaper.create({
       data: {
-        examType,
-        year: isPractice ? null : Number(year),
-        pdfUrl,
-        title,
-        isPractice,
-        userId: session.user.id,
+        ...body,
+        userId: user.id,
       },
     });
 
-    return NextResponse.json(questionPaper);
+    return NextResponse.json(paper);
   } catch (error) {
     console.error('Error creating question paper:', error);
     return NextResponse.json(
       { 
         error: 'Error creating question paper',
-        details: (error as Error).message 
+        details: error.message 
       }, 
       { status: 500 }
     );
@@ -67,22 +45,25 @@ export async function POST(req: Request) {
 
 export async function GET(req: Request) {
   try {
-    const session = await getServerSession(authOptions);
-    if (!session || !(await checkAdmin(session))) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-    }
+    const { searchParams } = new URL(req.url);
+    const subCategoryId = searchParams.get('subCategoryId');
+
+    const where = subCategoryId ? { subCategoryId } : {};
 
     const papers = await prisma.questionPaper.findMany({
-      orderBy: [
-        { createdAt: 'desc' },
-      ],
+      where,
+      include: {
+        subCategory: {
+          include: {
+            category: true
+          }
+        }
+      },
+      orderBy: { createdAt: 'desc' }
     });
 
     return NextResponse.json(papers);
   } catch (error) {
-    return NextResponse.json(
-      { error: 'Error fetching question papers' },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
   }
 } 

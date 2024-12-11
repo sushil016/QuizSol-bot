@@ -133,16 +133,17 @@ enum ExamType {
 }
 
 model QuestionPaper {
-  id        String   @id @default(cuid())
-  examType  ExamType
-  year      Int?
-  pdfUrl    String
-  title     String
-  isPractice Boolean  @default(false)
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  uploadedBy User     @relation(fields: [userId], references: [id])
-  userId    String
+  id            String   @id @default(cuid())
+  title         String
+  year          Int?
+  pdfUrl        String
+  isPractice    Boolean  @default(false)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  uploadedBy    User     @relation(fields: [userId], references: [id])
+  userId        String
+  subCategory   SubCategory @relation(fields: [subCategoryId], references: [id])
+  subCategoryId String
 }
 
 model Exam {
@@ -191,6 +192,7 @@ model SubCategory {
   categoryId    String
   category      ExamCategory   @relation(fields: [categoryId], references: [id])
   questionSets  QuestionSet[]
+  questionPapers QuestionPaper[]
   createdAt     DateTime       @default(now())
   updatedAt     DateTime       @updatedAt
 

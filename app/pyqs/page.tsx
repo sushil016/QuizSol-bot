@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import {
   Dialog,
@@ -25,145 +25,128 @@ interface QuestionPaper {
   year: number | null;
   pdfUrl: string;
   isPractice: boolean;
+  subCategoryId: string;
 }
 
-const examTypes = [
-  { id: 'NEET', title: 'NEET', description: 'National Eligibility cum Entrance Test' },
-  { id: 'JEE', title: 'JEE', description: 'Joint Entrance Examination' },
-  { id: 'GATE', title: 'GATE', description: 'Graduate Aptitude Test in Engineering' },
-];
+interface Category {
+  id: string;
+  name: string;
+  subCategories: SubCategory[];
+}
+
+interface SubCategory {
+  id: string;
+  name: string;
+  year: number;
+}
 
 export default function PyqsPage() {
   const [showExamDialog, setShowExamDialog] = useState(true);
-  const [selectedExam, setSelectedExam] = useState<string | null>(null);
+  const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [papers, setPapers] = useState<QuestionPaper[]>([]);
+  const [categories, setCategories] = useState<Category[]>([]);
   const router = useRouter();
 
-  const handleExamSelect = async (examType: string) => {
-    setSelectedExam(examType);
-    setShowExamDialog(false);
-    
+  useEffect(() => {
+    fetchCategories();
+  }, []);
+
+  const fetchCategories = async () => {
     try {
-      const response = await fetch(`/api/question-papers?examType=${examType}`);
+      const response = await fetch('/api/admin/exam-categories');
+      if (!response.ok) throw new Error('Failed to fetch categories');
       const data = await response.json();
-      
-      if (!response.ok) {
-        throw new Error(data.error || 'Failed to fetch papers');
-      }
-      
-      setPapers(data);
+      setCategories(data);
     } catch (error) {
-      console.error('Error fetching papers:', error);
-      setPapers([]); // Set empty array on error
-      // Optionally show an error message to the user
+      console.error('Error fetching categories:', error);
     }
+  };
+
+  const handleCategorySelect = async (categoryId: string) => {
+    setSelectedCategory(categoryId);
+    setShowExamDialog(false);
   };
 
   return (
     <div className="container py-10 max-w-7xl mx-auto">
-      {/* Exam Selection Dialog */}
       <Dialog open={showExamDialog} onOpenChange={setShowExamDialog}>
         <DialogContent className="sm:max-w-md">
           <DialogHeader>
-            <DialogTitle>Select Your Exam</DialogTitle>
+            <DialogTitle>Select Category</DialogTitle>
           </DialogHeader>
           <div className="grid gap-4">
-            {examTypes.map((exam) => (
+            {categories.map((category) => (
               <Button
-                key={exam.id}
+                key={category.id}
                 variant="outline"
                 className="w-full text-left flex flex-col items-start p-4"
-                onClick={() => handleExamSelect(exam.id)}
+                onClick={() => handleCategorySelect(category.id)}
               >
-                <span className="font-bold text-primary-foreground">{exam.title}</span>
-                <span className="text-sm text-muted-foreground">{exam.description}</span>
+                <span className="font-bold">{category.name}</span>
               </Button>
             ))}
           </div>
         </DialogContent>
       </Dialog>
 
-      {/* Main Content */}
-      {selectedExam && (
+      {selectedCategory && (
         <>
-          <div className="flex justify-between items-center mb-8 max-w-7xl mx-auto">
-            <h1 className="text-3xl font-bold">{selectedExam} Resources</h1>
+          <div className="flex justify-between items-center mb-8">
+            <h1 className="text-3xl font-bold">
+              {categories.find(c => c.id === selectedCategory)?.name} Resources
+            </h1>
             <Button variant="outline" onClick={() => setShowExamDialog(true)}>
-              Change Exam
+              Change Category
             </Button>
           </div>
 
-          <Tabs defaultValue="pyqs" className="space-y-4 ">
-            <TabsList className="grid justify-center items-center grid-cols-2 rounded-md">
-              <TabsTrigger value="pyqs">Previous Year Papers</TabsTrigger>
-              <TabsTrigger value="practice">Practice Papers</TabsTrigger>
+          <Tabs defaultValue={categories
+            .find(c => c.id === selectedCategory)
+            ?.subCategories[0]?.id} 
+            className="space-y-4"
+          >
+            <TabsList className="flex flex-wrap">
+              {categories
+                .find(c => c.id === selectedCategory)
+                ?.subCategories.map(sub => (
+                  <TabsTrigger key={sub.id} value={sub.id}>
+                    {sub.name} ({sub.year})
+                  </TabsTrigger>
+                ))}
             </TabsList>
 
-            <TabsContent value="pyqs">
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {papers
-                  .filter(paper => !paper.isPractice)
-                  .sort((a, b) => (b.year || 0) - (a.year || 0))
-                  .map((paper) => (
-                    <Card key={paper.id} className="hover:shadow-lg transition-shadow">
-                      <CardHeader>
-                        <CardTitle className="flex justify-between items-start">
-                          <span>{paper.title}</span>
-                          <span className="text-lg font-semibold text-primary">
-                            {paper.year}
-                          </span>
-                        </CardTitle>
-                      </CardHeader>
-                      <CardContent className="space-y-4">
-                        <Button 
-                          className="w-full flex items-center gap-2" 
-                          
-                        >
-                          <a 
-                            href={paper.pdfUrl} 
-                            download 
-                            target="_blank" 
-                            rel="noopener noreferrer"
-                          >
-                            <Download className="h-4 w-4" />
-                            Download PDF
-                          </a>
-                        </Button>
-                      </CardContent>
-                    </Card>
-                  ))}
-              </div>
-            </TabsContent>
-
-            <TabsContent value="practice">
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {papers
-                  .filter(paper => paper.isPractice)
-                  .map((paper) => (
-                    <Card key={paper.id} className="hover:shadow-lg transition-shadow">
-                      <CardHeader>
-                        <CardTitle>{paper.title}</CardTitle>
-                      </CardHeader>
-                      <CardContent className="space-y-4">
-                        <Button 
-                          className="w-full flex items-center gap-2"
-                          asChild
-                        >
-                          <a 
-                            href={paper.pdfUrl} 
-                            download 
-                            target="_blank" 
-                            rel="noopener noreferrer"
-                          >
-                            <Download className="h-4 w-4" />
-                            Download Practice Paper
-                          </a>
-                        </Button>
-                      </CardContent>
-                    </Card>
-                  ))}
-              </div>
-            </TabsContent>
+            {categories
+              .find(c => c.id === selectedCategory)
+              ?.subCategories.map(sub => (
+                <TabsContent key={sub.id} value={sub.id}>
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    {papers
+                      .filter(paper => paper.subCategoryId === sub.id)
+                      .map((paper) => (
+                        <Card key={paper.id}>
+                          <CardHeader>
+                            <CardTitle>{paper.title}</CardTitle>
+                          </CardHeader>
+                          <CardContent className="space-y-4">
+                            <div className="flex space-x-2">
+                              <Button asChild>
+                                <a href={paper.pdfUrl} target="_blank">
+                                  View PDF
+                                </a>
+                              </Button>
+                              <Button variant="outline" asChild>
+                                <a href={paper.pdfUrl} download>
+                                  <Download className="h-4 w-4 mr-2" />
+                                  Download
+                                </a>
+                              </Button>
+                            </div>
+                          </CardContent>
+                        </Card>
+                      ))}
+                  </div>
+                </TabsContent>
+              ))}
           </Tabs>
         </>
       )}

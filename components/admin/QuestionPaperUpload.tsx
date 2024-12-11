@@ -5,6 +5,7 @@ import { useSession } from 'next-auth/react';
 import { useToast } from "@/hooks/use-toast";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Download, Trash2 } from 'lucide-react';
+import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select";
 
 interface QuestionPaper {
   id: string;
@@ -13,6 +14,18 @@ interface QuestionPaper {
   year?: number | null;
   isPractice: boolean;
   pdfUrl: string;
+}
+
+interface Category {
+  id: string
+  name: string
+  subCategories: SubCategory[]
+}
+
+interface SubCategory {
+  id: string
+  name: string
+  year: number
 }
 
 export function QuestionPaperUpload() {
@@ -24,11 +37,18 @@ export function QuestionPaperUpload() {
   const [papers, setPapers] = useState<QuestionPaper[]>([]);
   const [loading, setLoading] = useState(false);
   const { toast } = useToast();
+  const [categories, setCategories] = useState<Category[]>([])
+  const [selectedCategory, setSelectedCategory] = useState("")
+  const [selectedSubCategory, setSelectedSubCategory] = useState("")
 
   // Fetch papers on component mount
   useEffect(() => {
     fetchPapers();
   }, []);
+
+  useEffect(() => {
+    fetchCategories()
+  }, [])
 
   const fetchPapers = async () => {
     try {
@@ -46,15 +66,31 @@ export function QuestionPaperUpload() {
     }
   };
 
+  const fetchCategories = async () => {
+    try {
+      const response = await fetch('/api/admin/exam-categories')
+      if (!response.ok) throw new Error('Failed to fetch categories')
+      const data = await response.json()
+      setCategories(data)
+    } catch (error) {
+      console.error('Error fetching categories:', error)
+      toast({
+        title: "Error",
+        description: "Failed to fetch categories",
+        variant: "error",
+      })
+    }
+  }
+
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setLoading(true);
 
     try {
-      if (!file) {
+      if (!file || !selectedSubCategory) {
         toast({
           title: "Error",
-          description: "Please select a file",
+          description: "Please select a file and subcategory",
           variant: "error",
         });
         return;
@@ -83,7 +119,7 @@ export function QuestionPaperUpload() {
         },
         body: JSON.stringify({
           title,
-          examType,
+          subCategoryId: selectedSubCategory,
           isPractice: paperType === 'practice',
           year: paperType === 'pyq' ? Number(year) : null,
           pdfUrl
@@ -100,9 +136,10 @@ export function QuestionPaperUpload() {
         description: "Paper uploaded successfully",
       });
 
-      // Reset form and refresh papers list
+      // Reset form
       setPaperType('pyq');
-      setExamType('');
+      setSelectedCategory('');
+      setSelectedSubCategory('');
       setTitle('');
       setYear('');
       setFile(null);
@@ -142,16 +179,40 @@ export function QuestionPaperUpload() {
               </div>
 
               <div className="space-y-2">
-                <label className="text-sm font-medium">Exam Type</label>
-                <input
-                  type="text"
-                  value={examType}
-                  onChange={(e) => setExamType(e.target.value)}
-                  required
-                  className="w-full px-3 py-2 border rounded-md"
-                  placeholder="Enter exam type"
-                />
+                <label className="text-sm font-medium">Category</label>
+                <Select value={selectedCategory} onValueChange={setSelectedCategory}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select Category" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {categories.map((category) => (
+                      <SelectItem key={category.id} value={category.id}>
+                        {category.name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
               </div>
+
+              {selectedCategory && (
+                <div className="space-y-2">
+                  <label className="text-sm font-medium">Sub Category</label>
+                  <Select value={selectedSubCategory} onValueChange={setSelectedSubCategory}>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select Sub Category" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {categories
+                        .find(c => c.id === selectedCategory)
+                        ?.subCategories.map((sub) => (
+                          <SelectItem key={sub.id} value={sub.id}>
+                            {sub.name} ({sub.year})
+                          </SelectItem>
+                        ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+              )}
 
               <div className="space-y-2">
                 <label className="text-sm font-medium">Title</label>
