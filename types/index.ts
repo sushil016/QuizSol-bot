@@ -8,16 +8,36 @@ export interface User {
 }
 
 export interface Question {
-  id: string;
-  questionText: string;
-  options: string[];
-  correctAnswer: number;
-  explanation?: string;
-  category: string;
-  subCategory: string;
-  difficulty: 'EASY' | 'MEDIUM' | 'HARD';
-  createdAt: Date;
-  updatedAt: Date;
+  id: string
+  questionText: string
+  options: string
+  correctAnswer: number
+  explanation?: string
+  questionImageUrl?: string
+  explanationImageUrl?: string
+  setTitle: string
+  categoryName: string
+  subCategoryName: string
+  subCategoryYear: number
+  difficulty?: 'easy' | 'medium' | 'hard'
+}
+
+export interface QuestionSet {
+  id: string
+  name: string
+  totalQuestions: number
+  totalTime: number // in minutes
+  subCategories: string[]
+  questions: Question[]
+}
+
+export interface ExamResult {
+  totalQuestions: number
+  answeredQuestions: {[key: number]: number}
+  skippedQuestions: number[]
+  correctAnswers: number
+  incorrectAnswers: number
+  unattemptedQuestions: number
 }
 
 export interface UserActivity {

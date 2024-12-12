@@ -5,7 +5,7 @@ import { QuestionPractice } from "@/components/QuestionPractice"
 import { useRouter } from "next/navigation"
 
 export default function PracticePage({ params }: { params: { subCategoryId: string } }) {
-  const [questions, setQuestions] = useState<any[]>([])
+  const [questionSet, setQuestionSet] = useState<any>(null)
   const router = useRouter()
 
   useEffect(() => {
@@ -14,16 +14,19 @@ export default function PracticePage({ params }: { params: { subCategoryId: stri
       router.push('/exam')
       return
     }
-    setQuestions(JSON.parse(storedQuestions))
+    setQuestionSet({
+      questions: JSON.parse(storedQuestions),
+      totalTime: 60 // Add any other required questionSet properties
+    })
   }, [router])
 
-  if (questions.length === 0) {
+  if (!questionSet) {
     return <div>Loading...</div>
   }
 
   return (
     <div className="container mx-auto py-10">
-      <QuestionPractice questions={questions} />
+      <QuestionPractice questionSet={questionSet} />
     </div>
   )
 } 
