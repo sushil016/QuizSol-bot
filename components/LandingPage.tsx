@@ -82,8 +82,8 @@ export function LandingPage() {
         </div>
       </section>
 
-      <AboutUs />
       <FeaturesOverview />
+      <AboutUs />
       <UserTestimonials />
       <ContactForm />
       <section className="py-20 relative overflow-hidden">
