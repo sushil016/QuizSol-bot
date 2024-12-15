@@ -1,7 +1,7 @@
 import './globals.css';
 import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
-
+import { LoadingBar } from '@/components/ui/loading-bar';
 
 import { Header } from '@/components/layout/header';
 import { Providers } from '@/components/providers';
@@ -23,6 +23,7 @@ export default function RootLayout({
     <html lang="en" suppressHydrationWarning>
       <body className={`${inter.className} min-h-screen bg-background text-foreground`}>
         <Providers>
+          <LoadingBar />
           <Header />
           <main className="min-h-[calc(100vh-4rem)]">{children}</main>
           <Footer />
