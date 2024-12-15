@@ -163,8 +163,8 @@ export default function AboutUs() {
 
 const offerItems = [
   {
-    title: "Download Past Papers",
-    description: "Access and download a wide range of past papers for various exams to practice offline."
+    title: "AI-Driven Learning experience",
+    description: "A complete platform for students of all ages—whether you're preparing for school exams, college tests, or competitive challenges."
   },
   {
     title: "Live Solving Interface",
@@ -178,39 +178,39 @@ const offerItems = [
 
 const steps = [
   {
-    title: "Sign up or Log in",
-    description: "Create an account or log in to access our full range of features."
+    title: "Select your grade or exam type.",
+    description: ""
   },
   {
-    title: "Choose your exam and year",
-    description: "Select the specific exam (e.g., NEET 2024, JEE Mains 2023) you want to practice."
-  },
-  {
-    title: "Solve live or download the PDF",
+    title: " Choose from live practice, custom quizzes, or PDF downloads.",
     description: "Choose between solving the paper online or downloading it for offline practice."
   },
   {
-    title: "Review your answers and solutions",
-    description: "Check your answers against our detailed solutions and explanations."
+    title: "Receive personalized insights and AI recommendations after solving",
+    description: ""
+  },
+  {
+    title: "Track your long-term progress with in-depth analytics.",
+    description: ""
   }
 ]
 
 const faqs = [
   {
     question: "Is this free to use?",
-    answer: "We offer both free and premium features. Basic access to past papers is free, while advanced features like performance tracking and live solving may require a subscription."
+    answer: "We offer both free and premium features. Basic access to live Solving and past papers is free, while advanced features like AI recommendations may require a subscription."
   },
   {
     question: "How do I track my performance?",
     answer: "After solving papers, your performance data is automatically recorded. You can view detailed analytics, including scores, time spent, and areas for improvement, in your user dashboard."
   },
   {
-    question: "Are the solutions provided for all questions?",
-    answer: "Yes, we provide detailed solutions and explanations for all questions in our database, ensuring you can learn from every problem you encounter."
+    question: "How does the AI customize practice papers?",
+    answer: "The AI analyzes (our machine learning model) your performance data and generates personalized practice papers that focus on your areas of strength and weakness using the latest exam patterns."
   },
   {
     question: "Can I use this platform on my mobile device?",
-    answer: "Our platform is fully responsive and works on desktops, tablets, and smartphones, allowing you to study on the go."
+    answer: "Yes, our platform is fully responsive and works on desktops, tablets, and smartphones, allowing you to study on the go."
   }
 ]
 

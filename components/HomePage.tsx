@@ -27,7 +27,7 @@ export function HomePage() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.2 }}
             >
-              Master Your Exams: Solve Past Papers Like a Pro!
+              Personalized Learning for Every Student: School, College, and Aspirants!
             </motion.h1>
             
             <motion.p 
@@ -36,21 +36,20 @@ export function HomePage() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.4 }}
             >
-              Access NEET, JEE, GATE, and other competitive exam question papers. 
-              Solve them live, track your progress, and ace your preparation.
+              Access interactive question papers, live-solving tools, and AI-driven insights to boost your performance—whether you are in school or preparing for competitive exams.
             </motion.p>
 
             <motion.div 
               className="flex flex-wrap gap-4"
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.6 }}
+              transition={{ delay: 0.6 }} 
             >
               {!session ? (
                 <>
                   <button className="p-3 bg-gradient-to-r from-orange-500 via-purple-500 to-yellow-500 text-white rounded-lg text-base font-bold
                   [background-size:300%] animate-moving-gradient">
-                    <Link href="/register">Start Solving Now</Link>
+                    <Link href="/register">Start Your Journey</Link>
                   </button>
                   <Button variant="outline" size="lg">
                     <Link href="/pyqs">Download PYQs</Link>

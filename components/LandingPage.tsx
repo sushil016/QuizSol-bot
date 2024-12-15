@@ -20,22 +20,22 @@ import { ContactForm } from './ContactForm';
 const features = [
   {
     title: 'Diverse Question Bank',
-    description: 'Access a wide range of questions across multiple categories and difficulty levels',
+    description: 'From foundational quizzes to advanced mock tests, access resources tailored to your grade or exam.',
     icon: '📚',
   },
   {
-    title: 'Track Progress',
-    description: 'Monitor your performance with detailed statistics and analytics',
+    title: 'Personalized AI-Driven Insights',
+    description: 'Track progress, get recommendations, and improve based on your strengths and weaknesses.',
     icon: '📊',
   },
   {
-    title: 'Practice Mode',
-    description: 'Learn at your own pace with unlimited practice sessions',
+    title: 'Interactive Practice Modes',
+    description: 'Solve real-time questions with a timer or study offline with PDFs.',
     icon: '🎯',
   },
   {
-    title: 'Personalized Learning',
-    description: 'Get recommendations based on your performance and learning patterns',
+    title: 'Comprehensive Progress Tracking',
+    description: "Monitor your journey with detailed analytics, time tracking, and skill insights.",
     icon: '🎓',
   },
 ];
@@ -45,10 +45,7 @@ export function LandingPage() {
 
   return (
     <div className="min-h-screen">
-      {/* Hero Section with animated background */}
       <HomePage />
-
-      {/* Features Section with enhanced cards */}
       <section className="py-20 bg-muted/50">
         <div className="container mx-auto px-4">
           <motion.h2 
@@ -85,12 +82,10 @@ export function LandingPage() {
         </div>
       </section>
 
-      {/* Add the About Section here */}
       <AboutUs />
       <FeaturesOverview />
       <UserTestimonials />
       <ContactForm />
-      {/* Enhanced CTA Section */}
       <section className="py-20 relative overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-background" />
         <div className="container mx-auto px-4 text-center relative">

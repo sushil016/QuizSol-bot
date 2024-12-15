@@ -17,29 +17,29 @@ const testimonials: Testimonial[] = [
   {
     name: "Sarah Johnson",
     photo: "/placeholder.svg?height=100&width=100",
-    role: "Medical Student",
-    quote: "queSol transformed my MCAT prep. The live solving feature helped me improve my timing significantly.",
-    achievement: "Scored in the 95th percentile on MCAT"
+    role: "Parent of a 5th grader",
+    quote: "queSol transformed My child loves the quizzes and analytics. It makes studying fun! — Parent of a 5th-grader.",
+    achievement: "My child is now scoring 90% in his school exams"
   },
   {
     name: "Michael Chen",
     photo: "/placeholder.svg?height=100&width=100",
-    role: "Law School Applicant",
-    quote: "The extensive PDF repository was a game-changer for my LSAT preparation. I had access to years of past papers.",
-    achievement: "Admitted to top 3 law schools"
+    role: "10th grader",
+    quote: "This helped me stay on top of my 10th-grade syllabus. — High School Student",
+    achievement: "Now I am preparing for my 11th grade exams"
   },
   {
     name: "Priya Patel",
     photo: "/placeholder.svg?height=100&width=100",
-    role: "Engineering Graduate",
-    quote: "The performance tracking feature helped me identify and improve my weak areas before the GRE.",
-    achievement: "Secured full scholarship for Masters program"
+    role: "12th grader",
+    quote: "queSol's AI-driven practice papers were a game-changer for my JEE Mains prep. The personalized questions helped me focus on my weak areas. — College Student",
+    achievement: "scored 98.81 percentile in JEE Mains without any coaching"
   },
   {
     name: "Alex Rodriguez",
     photo: "/placeholder.svg?height=100&width=100",
     role: "Business School Applicant",
-    quote: "queSol's comprehensive approach to GMAT prep gave me the confidence I needed on test day.",
+    quote: "The AI recommendations saved me hours of revision time by targeting my weak areas. — College Student",
     achievement: "Achieved 750+ GMAT score"
   }
 ]
