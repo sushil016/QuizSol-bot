@@ -2,41 +2,17 @@
 
 import { motion } from "framer-motion"
 import { useEffect, useState } from "react"
-import { usePathname, useSearchParams, useRouter } from "next/navigation"
+import { usePathname } from "next/navigation"
 
 export function LoadingBar() {
   const [isLoading, setIsLoading] = useState(false)
   const pathname = usePathname()
-  const searchParams = useSearchParams()
-  const router = useRouter()
 
-  useEffect(() => {
-    const handleStart = () => {
-      setIsLoading(true)
-    }
-
-    const handleStop = () => {
-      setIsLoading(false)
-    }
-
-    // Subscribe to router events
-    router.events?.on('routeChangeStart', handleStart)
-    router.events?.on('routeChangeComplete', handleStop)
-    router.events?.on('routeChangeError', handleStop)
-
-    return () => {
-      router.events?.off('routeChangeStart', handleStart)
-      router.events?.off('routeChangeComplete', handleStop)
-      router.events?.off('routeChangeError', handleStop)
-    }
-  }, [router])
-
-  // Also track pathname and searchParams changes
   useEffect(() => {
     setIsLoading(true)
     const timer = setTimeout(() => setIsLoading(false), 1000)
     return () => clearTimeout(timer)
-  }, [pathname, searchParams])
+  }, [pathname])
 
   if (!isLoading) return null
 
